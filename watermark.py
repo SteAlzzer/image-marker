@@ -12,8 +12,25 @@ def revert_backup():
 def make_backup():
     pass
 
-def list_directory(path):
+def validate_file_by_extension(filename):
     pass
+
+def list_directory(dir_path, recursive=False, use_backup=False):
+    files_list = []
+
+    if use_backup:
+        backup_files = is_backup_there(dir_path)
+        revert_backup(backup_files)
+    if recursive:
+        for root, dirname, filename in os.walk(dir_path):
+            if validate_file_by_extension(filename):
+                files_list.append(os.join(root, filename))
+    else:
+        for filename in os.listdir(dir_path):
+            if validate_file_by_extension(filename):
+                files_list.append(filename)
+
+    return files_list
 
 def find_proper_font_size_to_fit_image_width(image_width):
     pass
@@ -93,6 +110,7 @@ def init_args():
 def main():
     args = init_args()
     args = validate_args(args)
+    images_list = list_directory(args.directory, args.recursive, args.use_backup)
 
 if __name__ == '__main__':
     main()
